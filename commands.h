@@ -23,7 +23,9 @@ void cmd_help();
 void cmd_unknown(const char *command);
 
 // commands
-void cmd_linecount(FILE *file, char *arg);
+void cmd_linecount(FILE *file, char *_);
+
+void cmd_globalwordcount(FILE *file, char *_);
 
 void cmd_wordcount(FILE *file, char *word);
 
@@ -31,6 +33,7 @@ void cmd_wordcount(FILE *file, char *word);
 static command_entry commands_table[] = {
     {"help", cmd_help},
     {"lc", cmd_linecount},
+    {"gwc", cmd_globalwordcount},
     {"wc", cmd_wordcount},
     {NULL, NULL}
 };
