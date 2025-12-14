@@ -19,6 +19,7 @@ void dispatch_cmd(const char *command, char *filename, char *arg) {
             precmd(filename);
 
             FILE *file = fopen(filename, "r");
+            rewind(file);
             commands_table[i].fn(file, arg);
 
             postcmd(file);
@@ -43,18 +44,18 @@ void cmd_unknown(const char *command) {
 
 void cmd_linecount(FILE *file, char *_) {
     int lines = 0;
-    int ch;
-    while ((ch = fgetc(file)) != EOF) if (ch == '\n') lines++;
+    int c;
+    while ((c = fgetc(file)) != EOF) if (c == '\n') lines++;
     printf("Counted %d lines.\n", lines);
 }
 
 void cmd_wordcount(FILE *file, char *word) {
     if (!word) return;
-    rewind(file);
 
     int count = 0;
     char token_buffer[1024];
 
+    // '%s' skips whitespaces
     while (fscanf(file, "%1023s", token_buffer) == 1) {
         char word_candidate[1024];
         int cursor = 0;
@@ -74,5 +75,23 @@ void cmd_wordcount(FILE *file, char *word) {
 }
 
 void cmd_globalwordcount(FILE *file, char *_) {
-    // TODO...
+    int count = 0;
+    for (char token_buffer[1024]; fscanf(file, "%1023s", token_buffer) == 1; count++);
+    printf("Found a total %d word(s).\n", count);
+}
+
+void cmd_charfrequency(FILE *file, char *_) {
+    int frequency_table[128] = {0}; // ASCII
+
+    // collect characters
+    int c;
+    while ((c = fgetc(file)) != EOF) if (c >= 0 && c < 128) frequency_table[c]++;
+
+    // print
+    for (int key = 0; key < 128; key++) {
+        if (frequency_table[key] == 0) continue;
+        if (isprint(key)) printf("'%c': %d\n", key, frequency_table[key]);
+        else if (key == 10) printf("<new lines>: %d\n", frequency_table[key]);
+        else printf("0x%02X: %d\n", key, frequency_table[key]);
+    }
 }

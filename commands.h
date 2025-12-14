@@ -29,12 +29,15 @@ void cmd_globalwordcount(FILE *file, char *_);
 
 void cmd_wordcount(FILE *file, char *word);
 
+void cmd_charfrequency(FILE *file, char *_);
+
 // command tables
 static command_entry commands_table[] = {
     {"help", cmd_help},
     {"lc", cmd_linecount},
     {"gwc", cmd_globalwordcount},
     {"wc", cmd_wordcount},
+    {"cf", cmd_charfrequency},
     {NULL, NULL}
 };
 
