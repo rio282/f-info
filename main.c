@@ -7,13 +7,19 @@
 
 int main(const int argc, char *argv[]) {
     if (argc == 1) {
-        cmd_help();
+        prompt_help();
         return 1;
     }
 
     if (strncmp(COMMAND_PREFIX, argv[1], strlen(COMMAND_PREFIX)) == 0) {
         char *command = argv[1] + strlen(COMMAND_PREFIX);
         int files_pointer_offset = 2;
+
+        // first, check if the help command is called
+        if (strcmp(command, "help") == 0) {
+            cmd_help();
+            return 0;
+        }
 
         // check for arguments
         char *additional_argument = NULL;
@@ -30,13 +36,19 @@ int main(const int argc, char *argv[]) {
         const int file_count = argc - files_pointer_offset;
 
         // call command on each file
+        if (file_count == 0) {
+            cmd_unknown(command);
+            return 1;
+        }
+
+        // call specified command on each file
         for (int i = 0; i < file_count; i++) {
             printf("Called '%s' on file: %s\n", command, files[i]);
             dispatch_cmd(command, files[i], additional_argument);
             if (i != file_count - 1) printf("\n\n");
         }
     } else {
-        cmd_help();
+        prompt_help();
         return 1;
     }
 

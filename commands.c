@@ -33,9 +33,16 @@ void postcmd(FILE *file) {
     fclose(file);
 }
 
-void cmd_help() {
+void prompt_help() {
     printf("finfo takes exactly two or more arguments.\n");
     printf("For help, use --help\n");
+}
+
+void cmd_help() {
+    printf("Accepted commands:\n");
+    for (int i = 0; commands_table[i].name != NULL; i++) {
+        printf(" - %s\t: %s\n", commands_table[i].name, commands_table[i].description);
+    }
 }
 
 void cmd_unknown(const char *command) {
@@ -94,4 +101,8 @@ void cmd_charfrequency(FILE *file, char *_) {
         else if (key == 10) printf("<new lines>: %d\n", frequency_table[key]);
         else printf("0x%02X: %d\n", key, frequency_table[key]);
     }
+}
+
+void cmd_metadata(FILE *file, char *_) {
+    fprintf(stderr, "TODO...");
 }

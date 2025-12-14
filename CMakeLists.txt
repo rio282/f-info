@@ -3,7 +3,7 @@ project(f_info C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(f_info main.c
+add_executable(finfo main.c
         commands.c
         commands.h
         file_utils.h)
