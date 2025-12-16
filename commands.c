@@ -104,5 +104,40 @@ void cmd_charfrequency(FILE *file, char *_) {
 }
 
 void cmd_metadata(FILE *file, char *_) {
-    fprintf(stderr, "TODO...");
+    const long size = get_file_size(file);
+    if (size >= 0) printf("Size: %ld bytes\n", size);
+    else printf("Size: unavailable\n");
+
+    // wow... horrendous
+#if defined(_WIN32)
+    const int fd = _fileno(file);
+    HANDLE handle = (HANDLE) _get_osfhandle(fd);
+    if (handle == INVALID_HANDLE_VALUE) {
+        printf("Permissions: unavailable\n");
+        return;
+    }
+
+    BY_HANDLE_FILE_INFORMATION info;
+    if (!GetFileInformationByHandle(handle, &info)) {
+        printf("Permissions: unavailable\n");
+        return;
+    }
+
+    const int read_only = (info.dwFileAttributes & FILE_ATTRIBUTE_READONLY) != 0;
+    printf("Readable: yes\n");
+    printf("Writable: %s\n", read_only ? "no" : "yes");
+    printf("Executable: unknown (Windows)\n");
+#else
+    int fd = fileno(file);
+    struct stat st;
+
+    if (fstat(fd, &st) == 0) {
+        printf("Permissions: %o\n", st.st_mode & 0777);
+        printf("Readable: %s\n", (st.st_mode & S_IRUSR) ? "yes" : "no");
+        printf("Writable: %s\n", (st.st_mode & S_IWUSR) ? "yes" : "no");
+        printf("Executable: %s\n", (st.st_mode & S_IXUSR) ? "yes" : "no");
+    } else {
+        printf("Permissions: unavailable\n");
+    }
+#endif
 }
