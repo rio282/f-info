@@ -105,7 +105,7 @@ void cmd_charfrequency(FILE *file, char *_) {
 
 void cmd_metadata(FILE *file, char *_) {
     const long size = get_file_size(file);
-    if (size >= 0) printf("Size: %ld bytes\n", size);
+    if (size >= 0) printf("Size: %s\n", to_tiny_size(size));
     else printf("Size: unavailable\n");
 
     // wow... horrendous
